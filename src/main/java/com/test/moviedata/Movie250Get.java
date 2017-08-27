@@ -21,6 +21,9 @@ import com.test.DoubanLogin.LoginMainSelenium;
 public class Movie250Get {
 	private int item=0;
 	private ArrayList<String> movieList=new ArrayList<String>();//电影名
+	private ArrayList<String> staffList=new ArrayList<String>();//电影名
+	private ArrayList<String> starList=new ArrayList<String>();//电影名
+	private ArrayList<String> commentList=new ArrayList<String>();//电影名
 	private ArrayList<String> movieURL=new ArrayList<String>();//电影链接
 	LoginMainSelenium ls=new LoginMainSelenium();
 	//获取电影细节内容
@@ -33,31 +36,56 @@ public class Movie250Get {
 		con.header("Accept-Encoding", "gzip, deflate, br");
 		con.header("Cookie", cookieStr);
 		try { 			Document doc=con.get();
-//			System.out.println(doc.toString());
-//			SAXReader saxReader=new SAXReader();
-//			
-//			Document document =saxReader.read();//
-			Elements titlesGet=doc.getElementsByClass("title");
-			Elements urlGet=doc.getElementsByTag("a");
-			for(Element urlStr:urlGet){
-				if(urlStr.text().toString().contains("subject")){
-					movieURL.add(urlStr.text().toString());
-				}
-			}
+			Elements titlesGet=doc.getElementsByClass("title");//获取各个电影的中文名字
+			Elements staffsGet=doc.getElementsByClass("bd");//获得电影的导演和演员的名字
+			Elements starGet=doc.getElementsByClass("rating_num");//获得电影的评分数
+//			Elements commentGet=doc.getElementsByClass("quote");//获得电影的基础评价
+			Elements urlGet=doc.getElementsByClass("quote");//获得该电影的链接
+//			Elements urlGet=doc.getElementsByTag("a");
+//			for(Element urlStr:urlGet){
+//				if(urlStr.text().toString().contains("subject")){
+//					movieURL.add(urlStr.text().toString());
+//				}
+//			}
+			//电影标题
 			for(Element title:titlesGet){
-				if(!title.text().toString().contains("/")){
+				if(!title.text().toString().contains("/")){//用于筛选去除外语电影名
 					movieList.add(title.text());
 				}
 			}
+			//导演以及演员名字
+			int j=0;
+			for(Element staff:staffsGet){
+				j++;
+				if(j>1){
+					staffList.add(staff.text());
+				}	
+			}
+			//获得电影的评分数
+			for(Element star:starGet){
+				starList.add(star.text());
+			}
+			//获得电影的基础评价
+//			for(Element comment:commentGet){
+//				commentList.add(comment.text());
+//			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for(String element:movieURL){
+		for(int i=0;i<movieList.size();i++){
 			item++;
-			System.out.println(item+"----->"+element);
+			System.out.println("---------"+item+"---------");
+			System.out.println(movieList.get(i));
+			System.out.println(staffList.get(i));
+			System.out.println(starList.get(i));
+//			System.out.println(commentList.get(i));
+			System.out.println("--------------------");
 		}
 		movieList.clear();
+		staffList.clear();
+		starList.clear();
+		commentList.clear();
 	}
 	//进行循环获取网页
 	public void getURL(){
