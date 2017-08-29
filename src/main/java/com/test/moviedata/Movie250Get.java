@@ -24,19 +24,19 @@ public class Movie250Get {
 	private ArrayList<String> infoList=new ArrayList<String>();//导演以及部分演员名字
 	private ArrayList<String> starList=new ArrayList<String>();//该电影的评分
 	private ArrayList<String> movieURL=new ArrayList<String>();//电影链接
-	LoginMainSelenium ls=new LoginMainSelenium();
+//	LoginMainSelenium ls=new LoginMainSelenium();
 	//获取电影细节内容
 	public ArrayList<String> getmovie(){
 		int i=0;
 		String urlPage="https://movie.douban.com/top250";
 		do{
 			//通过Jsoup获取网页内容	
-			String cookieStr=ls.getCookieStr();
+//			String cookieStr=ls.getCookieStr();
 			Connection con=Jsoup.connect(urlPage);
-			con.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0");
-			con.header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");
-			con.header("Accept-Encoding", "gzip, deflate, br");
-			con.header("Cookie", cookieStr);
+//			con.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0");
+//			con.header("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");
+//			con.header("Accept-Encoding", "gzip, deflate, br");
+//			con.header("Cookie", cookieStr);
 			try {
 	 			Document doc=con.get();
 				Elements titlesGet=doc.getElementsByClass("title");//获取各个电影的中文名字
@@ -44,13 +44,11 @@ public class Movie250Get {
 				Elements starGet=doc.getElementsByClass("rating_num");//获得电影的评分数
 				//获取电影链接
 				Element content=doc.getElementById("content");
-				Elements links=content.select("a");
-				for(int m=0;m<links.size();m+=2){
-					String linkStr=links.attr("abs:href");
-//					if(linkStr.text().contains("?start=")){
-//						
-//					}		
-					System.out.println(linkStr);//???????不会从网页中获取精准获取链接（需要练习）
+				Elements divContent=content.getElementsByClass("item");//获取每个class为item的div代码块
+				for(int m=0;m<divContent.size();m++){
+					Element link=divContent.get(m).select("a").first();//获取第一个链接
+					String absHref=link.attr("abs:href");//获取链接的完全路径（Jsoup主要是层层嵌套的一步步获取内容）	
+					movieURL.add(absHref);
 				}
 				//电影标题
 				for(Element title:titlesGet){
@@ -77,7 +75,7 @@ public class Movie250Get {
 			i+=25;
 			urlPage="https://movie.douban.com/top250?start="+i+"&filter=";
 		}while(i<250);
-		
+//		
 //		for(int j=0;j<movieURL.size();j++){
 //			item++;
 //			System.out.println("---------"+item+"---------");
